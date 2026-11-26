@@ -18,14 +18,19 @@ ENTRY = (
 )
 
 
-def main() -> None:
-    text = ENTRY
+def validate(text: str) -> None:
+    """Enforce the competition gate on a text: 1-120 chars, one line."""
     if not text or not text.strip():
         raise SystemExit("entry is empty")
     if len(text) > MAX_CHARS:
         raise SystemExit("entry exceeds %d characters" % MAX_CHARS)
     if "\n" in text or "\r" in text:
         raise SystemExit("entry must be a single line")
+
+
+def main() -> None:
+    text = ENTRY
+    validate(text)
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
@@ -35,8 +40,7 @@ def main() -> None:
         written = handle.read()
     if written != text:
         raise SystemExit("read-back mismatch")
-    if len(written) > MAX_CHARS:
-        raise SystemExit("written entry exceeds %d characters" % MAX_CHARS)
+    validate(written)
 
 
 if __name__ == "__main__":
